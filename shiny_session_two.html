@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>An Introduction to Shiny</title>
+  <meta charset="utf-8">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="shiny_session_two_files/rmdshower/node_modules/shower-ribbon/styles/screen-4x3.css">
+  <link rel="stylesheet" href="shiny_session_two_files/rmdshower/style-common.css">
+  <link rel="stylesheet" href="shiny_session_two_files/rmdshower/style-ribbon.css">
+  
+  
+    <style type="text/css">
+   div.sourceCode { overflow-x: auto; }
+   table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+     margin: 0; padding: 0; vertical-align: baseline; border: none; }
+   table.sourceCode { width: 100%; line-height: 100%; background-color: #f8f8f8; }
+   td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+   td.sourceCode { padding-left: 5px; }
+   pre, code { background-color: #f8f8f8; }
+   code > span.kw { color: #204a87; font-weight: bold; } /* Keyword */
+   code > span.dt { color: #204a87; } /* DataType */
+   code > span.dv { color: #0000cf; } /* DecVal */
+   code > span.bn { color: #0000cf; } /* BaseN */
+   code > span.fl { color: #0000cf; } /* Float */
+   code > span.ch { color: #4e9a06; } /* Char */
+   code > span.st { color: #4e9a06; } /* String */
+   code > span.co { color: #8f5902; font-style: italic; } /* Comment */
+   code > span.ot { color: #8f5902; } /* Other */
+   code > span.al { color: #ef2929; } /* Alert */
+   code > span.fu { color: #000000; } /* Function */
+   code > span.er { color: #a40000; font-weight: bold; } /* Error */
+   code > span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warning */
+   code > span.cn { color: #000000; } /* Constant */
+   code > span.sc { color: #000000; } /* SpecialChar */
+   code > span.vs { color: #4e9a06; } /* VerbatimString */
+   code > span.ss { color: #4e9a06; } /* SpecialString */
+   code > span.im { } /* Import */
+   code > span.va { color: #000000; } /* Variable */
+   code > span.cf { color: #204a87; font-weight: bold; } /* ControlFlow */
+   code > span.op { color: #ce5c00; font-weight: bold; } /* Operator */
+   code > span.pp { color: #8f5902; font-style: italic; } /* Preprocessor */
+   code > span.ex { } /* Extension */
+   code > span.at { color: #c4a000; } /* Attribute */
+   code > span.do { color: #8f5902; font-weight: bold; font-style: italic; } /* Documentation */
+   code > span.an { color: #8f5902; font-weight: bold; font-style: italic; } /* Annotation */
+   code > span.cv { color: #8f5902; font-weight: bold; font-style: italic; } /* CommentVar */
+   code > span.in { color: #8f5902; font-weight: bold; font-style: italic; } /* Information */
+  </style>
+  
+  
+  
+</head>
+
+<body class="shower list">
+
+  <header class="caption">
+    <h1>An Introduction to Shiny</h1>
+    <p>Julia Silge</p>
+  </header>
+
+    
+  
+<section id="an-introduction-to-shiny-session-two" class="slide level2">
+<h2>An Introduction to Shiny: Session Two</h2>
+<p><img src="figs/rstudio-hex-shiny-dot-psd.png"></p>
+<h3 id="julia-silge-stack-overflow">Julia Silge (Stack Overflow)</h3>
+<h4 id="juliasilge"><a href="https://twitter.com/juliasilge">@juliasilge</a></h4>
+<h4 id="httpjuliasilge.com"><a href="http://juliasilge.com/" class="uri">http://juliasilge.com/</a></h4>
+</section>
+<section id="shiny-r-markdown" class="slide level2">
+<h2>Shiny + R Markdown</h2>
+<ul>
+<li>R Markdown is my jam</li>
+<li>We can use Shiny to make interactive reports with R Markdown</li>
+<li>Add <code>runtime: shiny</code> to the YAML of an R Markdown document</li>
+</ul>
+</section>
+<section id="lets-install-some-packages" class="slide level2">
+<h2>Let’s install some packages</h2>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">install.packages</span>(<span class="kw">c</span>(<span class="st">&quot;shiny&quot;</span>,
+                   <span class="st">&quot;dplyr&quot;</span>,
+                   <span class="st">&quot;ggplot2&quot;</span>,
+                   <span class="st">&quot;tidyr&quot;</span>,
+                   <span class="st">&quot;flexdashboard&quot;</span>,
+                   <span class="st">&quot;devtools&quot;</span>))
+
+devtools::<span class="kw">install_github</span>(<span class="st">&quot;juliasilge/southafricastats&quot;</span>)</code></pre></div>
+</section>
+<section id="extending-r-markdown-with-shiny" class="slide level2 grid">
+<h2>Extending R Markdown with Shiny</h2>
+<ul>
+<li>R Markdown has built-in capability to handle Shiny reactivity</li>
+<li>We can write reports that are interactive to the user</li>
+<li>R Markdown reports with Shiny must be run locally or by a Shiny server</li>
+</ul>
+</section>
+<section id="making-a-regular-plot" class="slide level2">
+<h2>Making a regular plot</h2>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(dplyr)
+<span class="kw">library</span>(tidyr)
+<span class="kw">library</span>(ggplot2)
+<span class="kw">library</span>(southafricastats)
+
+totals &lt;-<span class="st"> </span>population_zaf %&gt;%<span class="st"> </span>
+<span class="st">    </span><span class="kw">filter</span>(year ==<span class="st"> </span><span class="dv">2013</span>) %&gt;%<span class="st"> </span>
+<span class="st">    </span><span class="kw">select</span>(province, total)
+
+
+compare_provinces &lt;-<span class="st"> </span>mortality_zaf %&gt;%
+<span class="st">    </span><span class="kw">left_join</span>(population_zaf) %&gt;%
+<span class="st">    </span><span class="kw">filter</span>(!<span class="kw">is.na</span>(total)) %&gt;%
+<span class="st">    </span><span class="kw">mutate</span>(<span class="dt">mortality =</span> deaths /<span class="st"> </span>total *<span class="st"> </span><span class="fl">1e3</span>) %&gt;%
+<span class="st">    </span><span class="kw">group_by</span>(province, indicator) %&gt;%
+<span class="st">    </span><span class="kw">summarise</span>(<span class="dt">mortality =</span> <span class="kw">mean</span>(mortality, <span class="dt">na.rm =</span> <span class="ot">TRUE</span>)) %&gt;%
+<span class="st">    </span>ungroup %&gt;%
+<span class="st">    </span><span class="kw">left_join</span>(totals) %&gt;%
+<span class="st">    </span><span class="kw">spread</span>(indicator, mortality)</code></pre></div>
+</section>
+<section id="making-a-regular-plot-1" class="slide level2">
+<h2>Making a regular plot</h2>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">ggplot</span>(compare_provinces, <span class="kw">aes</span>(<span class="st">`</span><span class="dt">Cerebrovascular diseases (I60-I69)</span><span class="st">`</span>,
+                              <span class="st">`</span><span class="dt">Diabetes mellitus (E10-E14)</span><span class="st">`</span>,
+                              <span class="dt">size =</span> total,
+                              <span class="dt">label =</span> province)) +
+<span class="st">    </span><span class="kw">geom_point</span>(<span class="dt">alpha =</span> <span class="fl">0.7</span>, <span class="dt">color =</span> <span class="st">&quot;midnightblue&quot;</span>) +
+<span class="st">    </span><span class="kw">geom_text</span>(<span class="kw">aes</span>(<span class="dt">size =</span> <span class="fl">3e6</span>), <span class="dt">vjust =</span> <span class="fl">2.5</span>) +
+<span class="st">    </span><span class="kw">theme_minimal</span>() +
+<span class="st">    </span><span class="kw">theme</span>(<span class="dt">legend.position=</span><span class="st">&quot;none&quot;</span>)</code></pre></div>
+</section>
+<section id="making-a-regular-plot-2" class="slide level2">
+<h2>Making a regular plot</h2>
+<p><img src="shiny_session_two_files/figure-revealjs/unnamed-chunk-5-1.png" width="810" /></p>
+</section>
+<section id="making-an-input-for-r-markdown" class="slide level2">
+<h2>Making an input for R Markdown</h2>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">selectInput</span>(<span class="dt">inputId =</span> <span class="st">&quot;x&quot;</span>, 
+            <span class="dt">label =</span> <span class="st">&quot;X-axis:&quot;</span>,
+            <span class="dt">choices =</span> <span class="kw">colnames</span>(compare_provinces)[<span class="dv">3</span>:<span class="dv">20</span>], 
+            <span class="dt">selected =</span> <span class="st">&quot;Other forms of heart disease (I30-I52)&quot;</span>)
+
+<span class="kw">selectInput</span>(<span class="dt">inputId =</span> <span class="st">&quot;y&quot;</span>, 
+            <span class="dt">label =</span> <span class="st">&quot;Y-axis:&quot;</span>,
+            <span class="dt">choices =</span> <span class="kw">colnames</span>(compare_provinces)[<span class="dv">3</span>:<span class="dv">20</span>], 
+            <span class="dt">selected =</span> <span class="st">&quot;Non-natural causes&quot;</span>)</code></pre></div>
+</section>
+<section id="what-do-we-do-with-those-strings-now" class="slide level2">
+<h2>What do we do with those strings now?</h2>
+<ul>
+<li>The type of most things you access like <code>input$x</code> is a string</li>
+<li>If we didn’t have any spaces or special characters, we could use <code>aes_string</code></li>
+</ul>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">ggplot</span>(compare_provinces, <span class="kw">aes_string</span>(<span class="dt">x =</span> input$x, 
+                                     <span class="dt">y =</span> input$y)) +
+<span class="st">    </span><span class="kw">geom_point</span>()</code></pre></div>
+<ul>
+<li>But alas, we cannot</li>
+</ul>
+</section>
+<section id="what-do-we-do-with-those-strings-now-1" class="slide level2">
+<h2>What do we do with those strings now?</h2>
+<ul>
+<li>Instead, let’s use a <code>reactive</code> expression</li>
+</ul>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">selected_df &lt;-<span class="st"> </span><span class="kw">reactive</span>({
+    subset_df &lt;-<span class="st"> </span>compare_provinces[, <span class="kw">c</span>(<span class="dv">1</span>:<span class="dv">2</span>, 
+                                     <span class="kw">which</span>(<span class="kw">colnames</span>(compare_provinces) ==<span class="st"> </span>input$x),
+                                     <span class="kw">which</span>(<span class="kw">colnames</span>(compare_provinces) ==<span class="st"> </span>input$y))]
+    <span class="kw">colnames</span>(subset_df) &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;province&quot;</span>, <span class="st">&quot;total&quot;</span>, 
+                             <span class="st">&quot;selected_x&quot;</span>, <span class="st">&quot;selected_y&quot;</span>)
+    subset_df
+})</code></pre></div>
+<ul>
+<li>A reactive expression uses input from the user and returns a value</li>
+<li>A reactive expression updates every times the input changes</li>
+</ul>
+</section>
+<section id="what-do-we-do-with-those-strings-now-2" class="slide level2">
+<h2>What do we do with those strings now?</h2>
+<ul>
+<li>Instead, let’s use a <code>reactive</code> expression.</li>
+</ul>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">selected_df &lt;-<span class="st"> </span><span class="kw">reactive</span>({
+    subset_df &lt;-<span class="st"> </span>compare_provinces[, <span class="kw">c</span>(<span class="dv">1</span>:<span class="dv">2</span>, 
+                                     <span class="kw">which</span>(<span class="kw">colnames</span>(compare_provinces) ==<span class="st"> </span>input$x),
+                                     <span class="kw">which</span>(<span class="kw">colnames</span>(compare_provinces) ==<span class="st"> </span>input$y))]
+    <span class="kw">colnames</span>(subset_df) &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;province&quot;</span>, <span class="st">&quot;total&quot;</span>, 
+                             <span class="st">&quot;selected_x&quot;</span>, <span class="st">&quot;selected_y&quot;</span>)
+    subset_df
+})</code></pre></div>
+<ul>
+<li>The best uses for reactive expressions are when you want to avoid re-running unnecessary code</li>
+<li>Only call a <code>reactive</code> expression from within another <code>reactive</code> function or a <code>render*</code> function</li>
+</ul>
+</section>
+<section id="reactive-expressions" class="slide level2">
+<h2>Reactive expressions</h2>
+<ul>
+<li>Do not put side effects in reactive expressions</li>
+</ul>
+<blockquote class="twitter-tweet" data-lang="en">
+<p lang="en" dir="ltr">
+.<a href="https://twitter.com/jcheng"><span class="citation" data-cites="jcheng">@jcheng</span></a> on reactive vs observe <a href="https://twitter.com/hashtag/shinydevcon?src=hash">#shinydevcon</a> <a href="https://twitter.com/hashtag/rstats?src=hash">#rstats</a> <a href="https://t.co/g9hJTbZB1o">pic.twitter.com/g9hJTbZB1o</a>
+</p>
+— Ajinkya Kale (<span class="citation" data-cites="ajinkyakale">@ajinkyakale</span>) <a href="https://twitter.com/ajinkyakale/status/693523312735948801">January 30, 2016</a>
+</blockquote>
+<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+</section>
+<section id="writing-an-output-for-r-markdown" class="slide level2">
+<h2>Writing an output for R Markdown</h2>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">renderPlot</span>({
+    <span class="kw">ggplot</span>(<span class="kw">selected_df</span>(), <span class="kw">aes</span>(<span class="dt">x =</span> selected_x,
+                              <span class="dt">y =</span> selected_y,
+                              <span class="dt">size =</span> total,
+                              <span class="dt">label =</span> province)) +
+<span class="st">        </span><span class="kw">geom_point</span>(<span class="dt">alpha =</span> <span class="fl">0.7</span>, <span class="dt">color =</span> <span class="st">&quot;midnightblue&quot;</span>) +
+<span class="st">        </span><span class="kw">theme_minimal</span>() +
+<span class="st">        </span><span class="kw">labs</span>(<span class="dt">x =</span> input$x, <span class="dt">y =</span> input$y) +
+<span class="st">        </span><span class="kw">geom_text</span>(<span class="kw">aes</span>(<span class="dt">size =</span> <span class="fl">1e7</span>), <span class="dt">vjust =</span> <span class="dv">2</span>) +
+<span class="st">        </span><span class="kw">theme_minimal</span>(<span class="dt">base_size =</span> <span class="dv">14</span>) +
+<span class="st">        </span><span class="kw">theme</span>(<span class="dt">legend.position=</span><span class="st">&quot;none&quot;</span>)
+})</code></pre></div>
+</section>
+<section id="is-that-too-squashed" class="titleslide slide level1"><h2 class="shout">Is that too… squashed?!</h2></section><section id="writing-an-output-for-r-markdown-1" class="slide level2">
+<h2>Writing an output for R Markdown</h2>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">fillCol</span>(<span class="dt">height =</span> <span class="dv">800</span>, 
+        <span class="kw">renderPlot</span>({
+            <span class="kw">ggplot</span>(<span class="kw">selected_df</span>(), <span class="kw">aes</span>(<span class="dt">x =</span> selected_x,
+                                      <span class="dt">y =</span> selected_y,
+                                      <span class="dt">size =</span> total,
+                                      <span class="dt">label =</span> province)) +
+<span class="st">                </span><span class="kw">geom_point</span>(<span class="dt">alpha =</span> <span class="fl">0.7</span>, <span class="dt">color =</span> <span class="st">&quot;midnightblue&quot;</span>) +
+<span class="st">                </span><span class="kw">theme_minimal</span>() +
+<span class="st">                </span><span class="kw">labs</span>(<span class="dt">x =</span> input$x, <span class="dt">y =</span> input$y) +
+<span class="st">                </span><span class="kw">geom_text</span>(<span class="kw">aes</span>(<span class="dt">size =</span> <span class="fl">1e7</span>), <span class="dt">vjust =</span> <span class="dv">2</span>) +
+<span class="st">                </span><span class="kw">theme_minimal</span>(<span class="dt">base_size =</span> <span class="dv">14</span>) +
+<span class="st">                </span><span class="kw">theme</span>(<span class="dt">legend.position=</span><span class="st">&quot;none&quot;</span>)
+        }, <span class="dt">height =</span> <span class="dv">800</span>)
+)</code></pre></div>
+</section><section id="flexible-layouts" class="slide level2 grid">
+<h2>Flexible layouts</h2>
+<ul>
+<li>Using <a href="http://shiny.rstudio.com/articles/gadget-ui.html#fillrowfillcol">fill layouts</a> can be helpful once you are putting Shiny outputs into R Markdown</li>
+<li>Use <code>fillCol</code> (or maybe <code>fillRow</code> in some situations) to make your report look nice</li>
+</ul>
+</section><section id="how-to-share-interactive-reports" class="slide level2">
+<h2>How to share interactive reports</h2>
+<ul>
+<li>R Markdown reports with <code>runtime: shiny</code> must be served by a Shiny server</li>
+<li>Run it locally! Put in on <a href="http://www.shinyapps.io/">shinyapps.io</a>! Build your own Shiny server!</li>
+</ul>
+</section><section id="the-flexdashboard-package" class="slide level2 grid">
+<h2>The flexdashboard package</h2>
+<ul>
+<li>I make almost all of my Shiny apps now using the <a href="http://rmarkdown.rstudio.com/flexdashboard/">flexdashboard</a> package</li>
+<li>The ratio of how good they look to how hard I have to work is <em>just</em> right</li>
+<li>Flexdashboard adapts itself for mobile devices</li>
+<li>Flexdashboard does not have to include Shiny elements</li>
+</ul>
+</section><section id="check-out-a-couple-of-examples" class="slide level2 grid">
+<h2>Check out a couple of examples</h2>
+<ul>
+<li><a href="https://juliasilge.shinyapps.io/survey2016/">Women in the Stack Overflow Developer survey</a></li>
+<li><a href="https://github.com/juliasilge/stacksurveyapp">Code here</a></li>
+<li><a href="https://datassist.shinyapps.io/neiss_demographics/">Emergency room visits</a></li>
+<li><a href="https://github.com/juliasilge/neissapp">Code here</a></li>
+</ul>
+</section>
+
+  <!--
+  To hide progress bar from entire presentation
+  just remove “progress” element.
+  -->
+  <!-- <div class="progress"></div> -->
+  <script src="shiny_session_two_files/rmdshower/node_modules/shower/node_modules/shower-core/shower.min.js"></script>
+  <!-- Copyright © 2015 Yours Truly, Famous Inc. -->
+  <!-- Photos by John Carey, fiftyfootshadows.net -->
+
+  
+  
+</body>
+</html>

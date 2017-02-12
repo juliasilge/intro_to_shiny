@@ -1,0 +1,190 @@
+---
+title: "An Introduction to Shiny"
+author: "Julia Silge"
+output:
+  rmdshower::shower_presentation:
+    self_contained: false
+    highlight: tango
+---
+
+```{r, echo = FALSE, warning = FALSE}
+library(knitr)
+knitr::opts_chunk$set(cache = TRUE, warning = FALSE, message = FALSE, dpi = 180)
+options(width=80)
+# to knit this document use devtools::install_github("mangothecat/rmdshower")
+```
+
+## An Introduction to Shiny 
+
+<img src="figs/rstudio-hex-shiny-dot-psd.png">
+
+### Julia Silge (Stack Overflow)
+
+#### [\@juliasilge](https://twitter.com/juliasilge)
+
+#### [http://juliasilge.com/](http://juliasilge.com/)
+
+
+## Let's install some packages
+
+```{r, eval=FALSE}
+install.packages(c("shiny",
+                   "dplyr",
+                   "ggplot2",
+                   "DT"
+                   "devtools"))
+
+devtools::install_github("juliasilge/southafricastats")
+```
+
+# What is a Shiny app? 
+
+## A web application framework for R
+
+- Shiny allows us as data scientists and analysts to turn our analyses written in R into interactive apps
+- A Shiny app is run by a server (computer)
+
+<img src="figs/new_app.png">
+
+## Navigation
+
+- Different viewing modes
+- How do you close the app?
+- Remember that your computer is running (i.e., serving) the app
+- The app is *reactive*
+
+## Shiny is flexible {.grid}
+
+- Check out a [complex example](https://beta.rstudioconnect.com/jcheng/scorecard-app/)
+- What is in [the code](https://github.com/jcheng5/scorecard-app)?
+
+# Inputs and outputs
+
+## Reactive programming
+
+- A Shiny app has an UI and a server function
+- The UI controls how the app looks and is laid out
+- The server function has the instructions about how to build the app
+
+## Reactive programming
+
+- Most of us who write R code are used to writing scripts to analyze data that are imperative or procedural (or maybe functional)
+- A reactive paradigm focuses on how data will flow through the code and how changes propagate
+- Reactive programming is important when a user is interacting with an interface
+
+
+## Inputs {.grid}
+
+<img src="figs/inputs.png" class="cover height">
+
+
+## Outputs {.grid}
+
+<img src="figs/outputs.png" height=400>
+
+[https://www.rstudio.com/resources/cheatsheets/](https://www.rstudio.com/resources/cheatsheets/)
+
+## First steps to reactivity
+
+Reactivity occurs when an input value is used to render an output object
+
+```{r, eval = FALSE}
+selectInput(inputId = "province",
+            label = "Province:",
+            choices = unique(mortality$province),
+            selected = "Gauteng")
+```
+
+## First steps to reactivity
+
+Reactivity occurs when an input value is used to render an output object
+
+```{r, eval = FALSE}
+# calculations behind the scenes
+server <- function(input, output) {
+    
+    output$mortalityPlot <- renderPlot({
+        mortality %>%
+            filter(province == input$province) %>%
+            ggplot(aes(year, deaths, color = indicator)) +
+            geom_line(alpha = 0.8, size = 1.5) +
+            theme_minimal(base_size = 18)
+    })
+}
+```
+
+## First steps to reactivity {.grid}
+
+Reactivity occurs when an input value is used to render an output object
+
+- Be sure to add the necessary libraries at the beginning of the app
+- Change the name of your output plot
+- Do you want to filter out any of the mortality causes?
+
+## A new kind of input
+
+We can select more than one thing at a time
+
+```{r, eval = FALSE}
+selectInput(inputId = "province",
+            label = "Province:",
+            choices = unique(mortality$province),
+            selected = "Gauteng",
+            multiple = TRUE)
+```
+
+## A new kind of input
+
+We can select more than one thing at a time
+
+```{r, eval = FALSE}
+# calculations behind the scenes
+server <- function(input, output) {
+    
+    output$mortalityPlot <- renderPlot({
+        mortality %>%
+            filter(province %in% input$province) %>%
+            ggplot(aes(year, deaths, color = indicator)) +
+            geom_line(alpha = 0.8, size = 1.5) +
+            facet_wrap(~province, scales = "free") +
+            theme_minimal(base_size = 18)
+    })
+}
+```
+
+## Checkbox input
+
+```{r, eval = FALSE}
+checkboxInput(inputId = "show_data",
+              label = "Show table?",
+              value = FALSE)
+```
+
+## Checkbox input
+
+```{r, eval = FALSE}
+output$mortalityTable <- renderDataTable({
+    if(input$show_data){
+        DT::datatable(data = selected_df())
+    }
+})
+```
+
+# Sharing your app
+
+## With someone who has R installed?
+
+- Share the code for your app (`app.R`)
+- Your collaborator can run the app locally
+
+## With everyone publicly?
+
+- Publish using an account on [shinyapps.io](http://www.shinyapps.io/)
+- There are a variety of scalable options from free to \$\$\$
+- I started with a free account and now pay for a starter account (after a few of my blog posts with Shiny apps got a lot of views)
+
+## With people in your organization?
+
+- Consider installing Shiny Server on a machine of your own
+- It was much easier than I thought
+- Check out RStudio's [clear, helpful instructions](https://www.rstudio.com/products/shiny/download-server/)

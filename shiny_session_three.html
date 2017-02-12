@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>An Introduction to Shiny</title>
+  <meta charset="utf-8">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="shiny_session_three_files/rmdshower/node_modules/shower-ribbon/styles/screen-4x3.css">
+  <link rel="stylesheet" href="shiny_session_three_files/rmdshower/style-common.css">
+  <link rel="stylesheet" href="shiny_session_three_files/rmdshower/style-ribbon.css">
+  
+  
+    <style type="text/css">
+   div.sourceCode { overflow-x: auto; }
+   table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+     margin: 0; padding: 0; vertical-align: baseline; border: none; }
+   table.sourceCode { width: 100%; line-height: 100%; background-color: #f8f8f8; }
+   td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+   td.sourceCode { padding-left: 5px; }
+   pre, code { background-color: #f8f8f8; }
+   code > span.kw { color: #204a87; font-weight: bold; } /* Keyword */
+   code > span.dt { color: #204a87; } /* DataType */
+   code > span.dv { color: #0000cf; } /* DecVal */
+   code > span.bn { color: #0000cf; } /* BaseN */
+   code > span.fl { color: #0000cf; } /* Float */
+   code > span.ch { color: #4e9a06; } /* Char */
+   code > span.st { color: #4e9a06; } /* String */
+   code > span.co { color: #8f5902; font-style: italic; } /* Comment */
+   code > span.ot { color: #8f5902; } /* Other */
+   code > span.al { color: #ef2929; } /* Alert */
+   code > span.fu { color: #000000; } /* Function */
+   code > span.er { color: #a40000; font-weight: bold; } /* Error */
+   code > span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warning */
+   code > span.cn { color: #000000; } /* Constant */
+   code > span.sc { color: #000000; } /* SpecialChar */
+   code > span.vs { color: #4e9a06; } /* VerbatimString */
+   code > span.ss { color: #4e9a06; } /* SpecialString */
+   code > span.im { } /* Import */
+   code > span.va { color: #000000; } /* Variable */
+   code > span.cf { color: #204a87; font-weight: bold; } /* ControlFlow */
+   code > span.op { color: #ce5c00; font-weight: bold; } /* Operator */
+   code > span.pp { color: #8f5902; font-style: italic; } /* Preprocessor */
+   code > span.ex { } /* Extension */
+   code > span.at { color: #c4a000; } /* Attribute */
+   code > span.do { color: #8f5902; font-weight: bold; font-style: italic; } /* Documentation */
+   code > span.an { color: #8f5902; font-weight: bold; font-style: italic; } /* Annotation */
+   code > span.cv { color: #8f5902; font-weight: bold; font-style: italic; } /* CommentVar */
+   code > span.in { color: #8f5902; font-weight: bold; font-style: italic; } /* Information */
+  </style>
+  
+  
+  
+</head>
+
+<body class="shower list">
+
+  <header class="caption">
+    <h1>An Introduction to Shiny</h1>
+    <p>Julia Silge</p>
+  </header>
+
+    
+  
+<section id="an-introduction-to-shiny-session-three" class="slide level2">
+<h2>An Introduction to Shiny: Session Three</h2>
+<p><img src="figs/rstudio-hex-shiny-dot-psd.png"></p>
+<h3 id="julia-silge-stack-overflow">Julia Silge (Stack Overflow)</h3>
+<h4 id="juliasilge"><a href="https://twitter.com/juliasilge">@juliasilge</a></h4>
+<h4 id="httpjuliasilge.com"><a href="http://juliasilge.com/" class="uri">http://juliasilge.com/</a></h4>
+</section>
+<section id="lets-install-some-packages" class="slide level2">
+<h2>Let’s install some packages</h2>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">install.packages</span>(<span class="kw">c</span>(<span class="st">&quot;shiny&quot;</span>,
+                   <span class="st">&quot;flexdashboard&quot;</span>,
+                   <span class="st">&quot;dplyr&quot;</span>,
+                   <span class="st">&quot;tidyr&quot;</span>,
+                   <span class="st">&quot;ggplot2&quot;</span>,
+                   <span class="st">&quot;leaflet&quot;</span>
+                   <span class="st">&quot;devtools&quot;</span>))
+
+devtools::<span class="kw">install_github</span>(<span class="st">&quot;juliasilge/southafricastats&quot;</span>)</code></pre></div>
+</section>
+<section id="flexdashboards-are-r-markdown-documents" class="slide level2 grid">
+<h2>Flexdashboards are R Markdown documents</h2>
+<ul>
+<li>Most of what we already talked about applies</li>
+<li>It takes care of most annoying layout issues, leaving you with beautiful dashboards without headaches</li>
+<li>Let’s check out a <a href="http://rmarkdown.rstudio.com/flexdashboard/examples.html">few examples</a></li>
+</ul>
+</section>
+<section id="lets-talk-about-layouts" class="slide level2">
+<h2>Let’s talk about layouts</h2>
+<ul>
+<li>There are many ways to make a dashboard using this package</li>
+<li>RStudio shows lots of <a href="http://rmarkdown.rstudio.com/flexdashboard/layouts.html">example layouts</a> to get you started</li>
+<li>Flexdashboard uses markdown headers to define different sections of the dashboard.</li>
+<li>You can make dashboards with single or multiple pages, with tabbed columns/rows, with a sidebar, etc.</li>
+</ul>
+</section>
+<section id="lets-make-a-multiple-page-dashboard-using-shiny-reactivity" class="titleslide slide level1"><h2 class="shout">Let’s make a multiple page dashboard using Shiny reactivity</h2></section><section id="multiple-pages" class="slide level2 grid">
+<h2>Multiple pages</h2>
+<ul>
+<li>To make multiple pages in a flexdashboard, use a level 1 markdown header (<code>=======================</code>)</li>
+<li>If you have A LOT of pages, you can make menus or use links</li>
+<li>You can use icons in the navigation menu for multiple pages</li>
+<li>One option is <a href="http://fontawesome.io/icons/">Font Awesome icons</a></li>
+</ul>
+</section><section id="creating-a-global-sidebar" class="slide level2">
+<h2>Creating a global sidebar</h2>
+<ul>
+<li>For our dashboard, we want the sidebar to apply across all pages</li>
+<li>We should define the sidebar with a level 1 markdown header</li>
+</ul>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">Column {.sidebar}
+==<span class="er">===================================================================</span>
+
+This app explores mortality data from the 
+[South Africa Data Portal](http:<span class="er">//</span>southafrica.opendataforafrica.org/).
+
+Use the input below to select a cause of death to explore.</code></pre></div>
+</section><section id="creating-a-global-sidebar-1" class="slide level2">
+<h2>Creating a global sidebar</h2>
+<ul>
+<li>Our dashboard is going to use Shiny for reactivity</li>
+<li>Add <code>runtime: shiny</code> to the YAML</li>
+<li>Add the Shiny input to a code chunk in the sidebar</li>
+</ul>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">selectInput</span>(<span class="dt">inputId =</span> <span class="st">&quot;indicator&quot;</span>,
+            <span class="dt">label =</span> <span class="st">&quot;Cause of death:&quot;</span>,
+            <span class="dt">choices =</span> <span class="kw">unique</span>(mortality_zaf$indicator),
+            <span class="dt">selected =</span> <span class="st">&quot;Tuberculosis (A15-A19)&quot;</span>)</code></pre></div>
+</section><section id="making-our-first-page" class="slide level2">
+<h2>Making our first page</h2>
+<ul>
+<li>Let’s make a leaflet map of the selected cause of mortality</li>
+<li>We need the mortality rate <code>spread</code> in a new data frame</li>
+</ul>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">totals &lt;-<span class="st"> </span>population_zaf %&gt;%<span class="st"> </span>
+<span class="st">    </span><span class="kw">filter</span>(year ==<span class="st"> </span><span class="dv">2013</span>) %&gt;%<span class="st"> </span>
+<span class="st">    </span><span class="kw">select</span>(province, total)
+
+compare_provinces &lt;-<span class="st"> </span>mortality_zaf %&gt;%
+<span class="st">    </span><span class="kw">left_join</span>(population_zaf) %&gt;%
+<span class="st">    </span><span class="kw">filter</span>(!<span class="kw">is.na</span>(total)) %&gt;%
+<span class="st">    </span><span class="kw">mutate</span>(<span class="dt">mortality =</span> deaths /<span class="st"> </span>total *<span class="st"> </span><span class="fl">1e3</span>) %&gt;%
+<span class="st">    </span><span class="kw">group_by</span>(province, indicator) %&gt;%
+<span class="st">    </span><span class="kw">summarise</span>(<span class="dt">mortality =</span> <span class="kw">mean</span>(mortality, <span class="dt">na.rm =</span> <span class="ot">TRUE</span>)) %&gt;%
+<span class="st">    </span>ungroup %&gt;%
+<span class="st">    </span><span class="kw">left_join</span>(totals) %&gt;%
+<span class="st">    </span><span class="kw">spread</span>(indicator, mortality)</code></pre></div>
+</section><section id="making-our-first-page-1" class="slide level2">
+<h2>Making our first page</h2>
+<ul>
+<li>Now let’s set up our first page</li>
+</ul>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">Map {data-icon=<span class="st">&quot;fa-map-marker&quot;</span>}
+==<span class="er">==================================================================</span>
+
+### Which provinces have a higher mortality rate from the selected cause of death?</code></pre></div>
+</section><section id="making-our-first-page-2" class="slide level2">
+<h2>Making our first page</h2>
+<ul>
+<li>Let’s set up a <code>reactive</code> expression to select the mortality rate we are interested in</li>
+</ul>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">selected_df &lt;-<span class="st"> </span><span class="kw">reactive</span>({
+    subset_df &lt;-<span class="st"> </span>compare_provinces[, <span class="kw">c</span>(<span class="dv">1</span>, 
+                                       <span class="kw">which</span>(<span class="kw">colnames</span>(compare_provinces) ==<span class="st"> </span>input$indicator))]
+    <span class="kw">colnames</span>(subset_df) &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;province&quot;</span>, <span class="st">&quot;indicator&quot;</span>)
+    population_zaf %&gt;%
+<span class="st">        </span><span class="kw">filter</span>(year ==<span class="st"> </span><span class="dv">2013</span>) %&gt;%
+<span class="st">        </span><span class="kw">left_join</span>(subset_df, <span class="dt">by =</span> <span class="st">&quot;province&quot;</span>) %&gt;%
+<span class="st">        </span><span class="kw">mutate</span>(<span class="dt">indicator =</span> indicator /<span class="st"> </span><span class="kw">sum</span>(indicator, <span class="dt">na.rm =</span> <span class="ot">TRUE</span>))
+})</code></pre></div>
+</section><section id="making-our-first-page-3" class="slide level2">
+<h2>Making our first page</h2>
+<ul>
+<li>Now we’re ready to make a leaflet map</li>
+<li>We can use <code>renderLeaflet</code> in the sample way we’d use <code>renderPlot</code> or another Shiny output</li>
+</ul>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">renderLeaflet</span>({
+    <span class="kw">leaflet</span>(<span class="kw">selected_df</span>()) %&gt;%
+<span class="st">        </span><span class="kw">addProviderTiles</span>(<span class="st">&quot;CartoDB.Positron&quot;</span>) %&gt;%
+<span class="st">        </span><span class="kw">addCircles</span>(<span class="dt">lng =</span> ~longitude, <span class="dt">lat =</span> ~latitude, <span class="dt">weight =</span> <span class="fl">2.5</span>,
+             <span class="dt">radius =</span> ~<span class="kw">sqrt</span>(indicator) *<span class="st"> </span><span class="fl">3e5</span> , <span class="dt">popup =</span> ~province,
+             <span class="dt">color =</span> <span class="st">&quot;magenta&quot;</span>)
+})</code></pre></div>
+</section>
+<section id="are-we-ready-for-another-page" class="titleslide slide level1"><h2 class="shout">Are we ready for another page?</h2></section><section id="setting-up-multiple-pages" class="slide level2 grid">
+<h2>Setting up multiple pages</h2>
+<ul>
+<li>We will use the same Shiny input from the global sidebar</li>
+<li>Let’s make a scatterplot comparing the selected mortality rate to the overall rate</li>
+</ul>
+</section><section id="making-our-second-page" class="slide level2">
+<h2>Making our second page</h2>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">mortality_zaf &lt;-<span class="st"> </span>mortality_zaf %&gt;%
+<span class="st">    </span><span class="kw">filter</span>(!(indicator %in%<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;All causes&quot;</span>)))</code></pre></div>
+</section><section id="making-our-second-page-1" class="slide level2">
+<h2>Making our second page</h2>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">Comparing provinces {data-icon=<span class="st">&quot;fa-list&quot;</span>}
+==<span class="er">==================================================================</span>
+
+### How does the selected mortality rate compare to the overall mortality rate?</code></pre></div>
+</section><section id="making-our-second-page-2" class="slide level2">
+<h2>Making our second page</h2>
+<ul>
+<li>Time for another <code>reactive</code> expression!</li>
+<li>If we didn’t have spaces in our column names here, we could use <code>aes_string</code></li>
+</ul>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">scatterplot_df &lt;-<span class="st"> </span><span class="kw">reactive</span>({
+    subset_df &lt;-<span class="st"> </span>compare_provinces[, <span class="kw">c</span>(<span class="dv">1</span>:<span class="dv">2</span>, 
+                                       <span class="kw">which</span>(<span class="kw">colnames</span>(compare_provinces) ==<span class="st"> &quot;All causes&quot;</span>),
+                                       <span class="kw">which</span>(<span class="kw">colnames</span>(compare_provinces) ==<span class="st"> </span>input$indicator))]
+    <span class="kw">colnames</span>(subset_df) &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;province&quot;</span>, <span class="st">&quot;total&quot;</span>, <span class="st">&quot;selected_x&quot;</span>, <span class="st">&quot;selected_y&quot;</span>)
+    subset_df
+})</code></pre></div>
+</section><section id="making-our-second-page-3" class="slide level2">
+<h2>Making our second page</h2>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">renderPlot</span>({
+    <span class="kw">ggplot</span>(<span class="kw">scatterplot_df</span>(), <span class="kw">aes</span>(<span class="dt">x =</span> selected_x,
+                                 <span class="dt">y =</span> selected_y,
+                                 <span class="dt">size =</span> total,
+                                 <span class="dt">label =</span> province)) +
+<span class="st">        </span><span class="kw">geom_point</span>(<span class="dt">alpha =</span> <span class="fl">0.7</span>, <span class="dt">color =</span> <span class="st">&quot;magenta4&quot;</span>) +
+<span class="st">        </span><span class="kw">theme_minimal</span>() +
+<span class="st">        </span><span class="kw">labs</span>(<span class="dt">x =</span> <span class="st">&quot;All causes&quot;</span>, <span class="dt">y =</span> input$indicator) +
+<span class="st">        </span><span class="kw">geom_text</span>(<span class="kw">aes</span>(<span class="dt">size =</span> <span class="fl">1e7</span>), <span class="dt">vjust =</span> <span class="dv">2</span>) +
+<span class="st">        </span><span class="kw">scale_x_continuous</span>(<span class="dt">limits =</span> <span class="kw">c</span>(<span class="fl">7.7</span>, <span class="fl">14.2</span>)) +
+<span class="st">        </span><span class="kw">theme_minimal</span>(<span class="dt">base_size =</span> <span class="dv">14</span>) +
+<span class="st">        </span><span class="kw">theme</span>(<span class="dt">legend.position=</span><span class="st">&quot;none&quot;</span>)
+})</code></pre></div>
+</section>
+<section id="our-dashboard-is-shaping-up" class="titleslide slide level1"><h2 class="shout">Our dashboard is shaping up</h2></section><section id="making-our-third-page" class="slide level2">
+<h2>Making our third page</h2>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">Changes in time {data-icon=<span class="st">&quot;fa-area-chart&quot;</span>}
+==<span class="er">==================================================================</span>
+
+### How have the number of deaths changed in time?</code></pre></div>
+</section><section id="making-our-third-page-1" class="slide level2">
+<h2>Making our third page</h2>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">renderPlot</span>({
+    mortality_zaf %&gt;%
+<span class="st">        </span><span class="kw">filter</span>(indicator ==<span class="st"> </span>input$indicator) %&gt;%
+<span class="st">        </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(year, deaths, <span class="dt">color =</span> province)) +
+<span class="st">        </span><span class="kw">geom_line</span>(<span class="dt">alpha =</span> <span class="fl">0.8</span>, <span class="dt">size =</span> <span class="fl">1.5</span>) +
+<span class="st">        </span><span class="kw">theme_minimal</span>(<span class="dt">base_size =</span> <span class="dv">18</span>) +
+<span class="st">        </span><span class="kw">labs</span>(<span class="dt">x =</span> <span class="ot">NULL</span>, <span class="dt">y =</span> <span class="st">&quot;Number of deaths per year&quot;</span>)
+})</code></pre></div>
+</section>
+<section id="time-for-the-last-page" class="titleslide slide level1"><h2 class="shout">Time for the last page</h2></section><section id="making-our-last-page" class="slide level2">
+<h2>Making our last page</h2>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">Table {data-icon=<span class="st">&quot;fa-table&quot;</span>}
+==<span class="er">==================================================================</span>
+
+### Explore the data as reported by the South Africa Data Portal</code></pre></div>
+</section><section id="making-our-last-page-1" class="slide level2">
+<h2>Making our last page</h2>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">renderDataTable</span>({
+    mortality_zaf %&gt;%
+<span class="st">        </span><span class="kw">filter</span>(indicator ==<span class="st"> </span>input$indicator)
+    },
+    <span class="dt">options =</span> <span class="kw">list</span>(<span class="dt">pageLength =</span> <span class="dv">10</span>)
+    )</code></pre></div>
+</section><section id="options-for-jazzing-up-flexdashboards" class="slide level2 grid">
+<h2>Options for jazzing up flexdashboards</h2>
+<ul>
+<li>Explore the <a href="http://rmarkdown.rstudio.com/flexdashboard/using.html#appearance">themes that come in the package</a></li>
+<li>Consider showing the code that made your dashboard with <code>source_code: embed</code></li>
+<li>Consider using plotly or other htmlwidgets</li>
+</ul>
+</section>
+<section id="time-for-you-to-experiment" class="titleslide slide level1"><h2 class="shout">Time for you to experiment</h2></section></section>
+
+  <!--
+  To hide progress bar from entire presentation
+  just remove “progress” element.
+  -->
+  <!-- <div class="progress"></div> -->
+  <script src="shiny_session_three_files/rmdshower/node_modules/shower/node_modules/shower-core/shower.min.js"></script>
+  <!-- Copyright © 2015 Yours Truly, Famous Inc. -->
+  <!-- Photos by John Carey, fiftyfootshadows.net -->
+
+  
+  
+</body>
+</html>
