@@ -142,7 +142,7 @@ selected_df <- reactive({
 ## Making our first page
 
 - Now we're ready to make a leaflet map
-- We can use `renderLeaflet` in the sample way we'd use `renderPlot` or another Shiny output
+- We can use `renderLeaflet` in the same way we'd use `renderPlot` or another Shiny output
 
 ```{r, eval=FALSE}
 renderLeaflet({
