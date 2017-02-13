@@ -147,7 +147,7 @@ selected_df <- reactive({
 ```
 
 - A reactive expression uses input from the user and returns a value
-- A reactive expression updates every times the input changes
+- A reactive expression updates every time the input changes
 
 ## What do we do with those strings now?
 
@@ -232,6 +232,6 @@ fillCol(height = 800,
 ## Check out a couple of examples {.grid}
 
 - [Women in the Stack Overflow Developer survey](https://juliasilge.shinyapps.io/survey2016/)
-- [Code here](https://github.com/juliasilge/stacksurveyapp)
+    - [Code here](https://github.com/juliasilge/stacksurveyapp)
 - [Emergency room visits](https://datassist.shinyapps.io/neiss_demographics/)
-- [Code here](https://github.com/juliasilge/neissapp)
+    - [Code here](https://github.com/juliasilge/neissapp)
