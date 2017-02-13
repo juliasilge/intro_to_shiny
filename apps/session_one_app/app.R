@@ -36,10 +36,14 @@ ui <- fluidPage(
 
 # calculations behind the scenes
 server <- function(input, output) {
-
-    output$mortalityPlot <- renderPlot({
+    
+    selected_df <- reactive({
         mortality_zaf %>%
-            filter(province %in% input$province) %>%
+            filter(province %in% input$province)
+    })
+    
+    output$mortalityPlot <- renderPlot({
+        selected_df() %>%
             ggplot(aes(year, deaths, color = indicator)) +
             geom_line(alpha = 0.8, size = 1.5) +
             facet_wrap(~province, scales = "free") +
